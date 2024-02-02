@@ -71,12 +71,12 @@ function createGalleryMarkup(images) {
   return images
     .map(
       ({ preview, original, description }) => `<li class="gallery-item">
-                        <a class="gallery-link" href=${original}>
+                        <a class="gallery-link" href="${original}">
                             <img
                             class="gallery-image"
-                            src=${preview}
-                            data-source=${original}
-                            alt=${description}
+                            src="${preview}"
+                            data-source="${original}"
+                            alt="${description}"
                             />
                         </a>
                         </li>
@@ -85,6 +85,7 @@ function createGalleryMarkup(images) {
     .join('');
 }
 let instance;
+
 container.addEventListener('click', event => {
   event.preventDefault();
   if (event.target === event.currentTarget) {
@@ -93,16 +94,31 @@ container.addEventListener('click', event => {
 
   const src = event.target.dataset.source;
 
-  instance = basicLightbox.create(`
-    <img src=${src} width="1112" height="640" alt = "${event.target.alt}">
-`);
+  instance = basicLightbox.create(
+    `
+      <img src=${src} width="1112" height="640" alt="${event.target.alt}">
+    `,
+    {
+      onShow: instance => {
+        const onKeydown = ({ code }) => {
+          if (code === 'Escape') {
+            instance.close();
+          }
+        };
+
+        document.addEventListener('keydown', onKeydown);
+
+        instance.element().onShow = () => {
+          document.addEventListener('keydown', onKeydown);
+        };
+
+        instance.element().onClose = () => {
+          document.removeEventListener('keydown', onKeydown);
+        };
+      },
+      onClose: instance => {},
+    }
+  );
+
   instance.show();
-});
-
-document.addEventListener('keyup', ({ code }) => {
-  if (code !== 'Escape') {
-    return;
-  }
-
-  instance.close();
 });

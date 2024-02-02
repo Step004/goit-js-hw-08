@@ -65,9 +65,9 @@ const images = [
 ];
 
 const container = document.querySelector('.gallery');
-container.innerHTML = createGalleruMarkup(images);
+container.innerHTML = createGalleryMarkup(images);
 
-function createGalleruMarkup(images) {
+function createGalleryMarkup(images) {
   return images
     .map(
       ({ preview, original, description }) => `<li class="gallery-item">
@@ -85,7 +85,6 @@ function createGalleruMarkup(images) {
     .join('');
 }
 let instance;
-
 container.addEventListener('click', event => {
   event.preventDefault();
   if (event.target === event.currentTarget) {
@@ -95,15 +94,15 @@ container.addEventListener('click', event => {
   const src = event.target.dataset.source;
 
   instance = basicLightbox.create(`
-    <img src=${src} width="1112" height="640" alt = "${src}">
+    <img src=${src} width="1112" height="640" alt = "${event.target.alt}">
 `);
-    instance.show();
+  instance.show();
 });
 
 document.addEventListener('keyup', ({ code }) => {
-    if (code !== 'Escape') {
-        return;
-    }
+  if (code !== 'Escape') {
+    return;
+  }
 
-    instance.close();
-})
+  instance.close();
+});
